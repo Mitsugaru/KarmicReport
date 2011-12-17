@@ -1,0 +1,31 @@
+name: KarmicReport
+
+main: com.mitsugaru.KarmicReport.KarmicReport
+
+version: 0.01
+
+website: http://dev.bukkit.org/server-mods/karmicreport/
+
+description: User report and comment system, to keep a history of infractions
+
+authors:
+  - Mitsugaru
+
+commands:
+  report:
+    description: Root command for KarmicShare
+    usage: /report ? - Show help on KarmicShare
+
+permissions:
+    KarmicReport.*:
+        description: Gives access to all KarmicShare commands
+        children:
+            KarmicReport.view: true
+            KarmicShare.edit: true
+        default: op
+    KarmicReport.view:
+        description: Allows user view another user's report
+        default: op
+    KarmicShare.edit:
+        description: Allows user edit a report
+        default: op
