@@ -100,7 +100,6 @@ public class Listener extends PlayerListener {
 						+ "';";
 				kr.getLiteDB().standardQuery(query);
 			}
-			// TODO generate report if ip is different. Update ip in masterlist
 			//Grab last ip
 			if(config.ipchange)
 			{
@@ -114,6 +113,7 @@ public class Listener extends PlayerListener {
 					ip = rs.getString("ip");
 					if(!ip.equals(newip))
 					{
+						//Their current ip is different from the master list
 						ipChanged= true;
 					}
 				}
@@ -123,6 +123,7 @@ public class Listener extends PlayerListener {
 					// Autolog kick reason to player's record
 					query = "INSERT INTO 'kr_reports' (playername,author,date,comment) VALUES('"+event.getPlayer().getName()+"','IPCHANGE','" +date+ "','OLD: " + ip + " NEW: "+ newip+"');";
 					kr.getLiteDB().standardQuery(query);
+					//TODO update ip in masterlist
 				}
 			}
 
