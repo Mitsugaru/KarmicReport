@@ -204,14 +204,6 @@ public class PlayerReport {
 				while (rs.next());
 				rs.close();
 			}
-			else
-			{
-				//TODO don't think this is necessary since the header
-				//provides this message
-				//There are no reports on this player
-				sender.sendMessage(ChatColor.RED + kr.getPluginPrefix()
-						+ " " + name + " has no comments");
-			}
 		}
 		catch(SQLException e)
 		{

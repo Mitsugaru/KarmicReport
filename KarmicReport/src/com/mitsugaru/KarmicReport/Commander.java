@@ -37,6 +37,7 @@ public class Commander implements CommandExecutor {
 		{
 			//No arguments
 			//probably do help here
+			this.showHelp(sender);
 		}
 		else
 		{
@@ -266,6 +267,11 @@ public class Commander implements CommandExecutor {
 			debugTime(sender, time);
 		}
 		return true;
+	}
+
+	private void showHelp(CommandSender sender) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private boolean adminCommand(CommandSender sender, String[] args) {
