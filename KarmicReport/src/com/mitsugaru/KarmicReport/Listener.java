@@ -26,6 +26,10 @@ public class Listener extends PlayerListener {
 
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
+		if(config.debug)
+		{
+			kr.getLogger().warning(kr.getPluginPrefix() + " PlayerQuit event");
+		}
 		final String name = event.getPlayer().getName();
 		String query = "SELECT * FROM 'kr_masterlist' WHERE playername='"
 				+ name + "';";
@@ -43,6 +47,10 @@ public class Listener extends PlayerListener {
 			rs.close();
 			if(has)
 			{
+				if(config.debug)
+				{
+					kr.getLogger().warning(kr.getPluginPrefix() + " PlayerQuit - update status");
+				}
 				//if they were kicked/banned and ignore update
 				if(!status.equals("BANNED") || !status.equals("KICKED"))
 				{
@@ -61,6 +69,10 @@ public class Listener extends PlayerListener {
 
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		if(config.debug)
+		{
+			kr.getLogger().warning(kr.getPluginPrefix() + " PlayerJoin event");
+		}
 		String newip = event.getPlayer().getAddress().toString()
 				.substring(1).split(":")[0];
 		final String date = dateFormat.format(new Date()).toString();
@@ -81,6 +93,10 @@ public class Listener extends PlayerListener {
 			rs.close();
 			if (!has)
 			{
+				if(config.debug)
+				{
+					kr.getLogger().warning(kr.getPluginPrefix() + " PlayerJoin - add new player");
+				}
 				// Add to master list
 				//Thanks to @Baummann for the concise command for getting player ip
 				query = "INSERT INTO 'kr_masterlist' VALUES('"
@@ -93,6 +109,10 @@ public class Listener extends PlayerListener {
 			}
 			else
 			{
+				if(config.debug)
+				{
+					kr.getLogger().warning(kr.getPluginPrefix() + " PlayerJoin - update date");
+				}
 				// Update date
 				query = "UPDATE 'kr_masterlist' SET date='"
 						+ dateFormat.format(new Date()).toString()
@@ -103,6 +123,10 @@ public class Listener extends PlayerListener {
 			//Grab last ip
 			if(config.ipchange)
 			{
+				if(config.debug)
+				{
+					kr.getLogger().warning(kr.getPluginPrefix() + " PlayerJoin - check ip");
+				}
 				query = "SELECT * FROM 'kr_masterlist' WHERE playername='"
 					+ event.getPlayer().getName() + "';";
 				rs = kr.getLiteDB().select(query);
@@ -120,10 +144,17 @@ public class Listener extends PlayerListener {
 				rs.close();
 				if(ipChanged)
 				{
+					if(config.debug)
+					{
+						kr.getLogger().warning(kr.getPluginPrefix() + " PlayerJoin - new ip, update");
+					}
 					// Autolog kick reason to player's record
 					query = "INSERT INTO 'kr_reports' (playername,author,date,comment) VALUES('"+event.getPlayer().getName()+"','IPCHANGE','" +date+ "','OLD: " + ip + " NEW: "+ newip+"');";
 					kr.getLiteDB().standardQuery(query);
-					//TODO update ip in masterlist
+					//Update ip in masterlist
+					query = "UPDATE 'kr_masterlist' SET ip='"
+							+ ip + "' WHERE playername='" + event.getPlayer().getName() + "';";
+					kr.getLiteDB().standardQuery(query);
 				}
 			}
 
@@ -137,11 +168,15 @@ public class Listener extends PlayerListener {
 
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
-		String query = "SELECT COUNT(*) FROM 'kr_masterlist' WHERE playername='"
-				+ event.getPlayer().getName() + "';";
-		ResultSet rs = kr.getLiteDB().select(query);
+		if(config.debug)
+		{
+			kr.getLogger().warning(kr.getPluginPrefix() + " PlayerLogin event");
+		}
 		try
 		{
+			String query = "SELECT COUNT(*) FROM 'kr_masterlist' WHERE playername='"
+				+ event.getPlayer().getName() + "';";
+			ResultSet rs = kr.getLiteDB().select(query);
 			boolean has = false;
 			if (rs.next())
 			{
@@ -154,21 +189,24 @@ public class Listener extends PlayerListener {
 			rs.close();
 			if (has)
 			{
+				if(config.debug)
+				{
+					kr.getLogger().warning(kr.getPluginPrefix() + " PlayerLogin - update state");
+				}
 				if (event.getResult() == PlayerLoginEvent.Result.ALLOWED)
 				{
 					// Update their status to online
 					// Update date
 					query = "UPDATE 'kr_masterlist' SET status='ONLINE' WHERE playername='"
 							+ event.getPlayer().getName() + "';";
-					kr.getLiteDB().standardQuery(query);
 				}
 				else if (event.getResult() == PlayerLoginEvent.Result.KICK_BANNED)
 				{
 					// Update their status to banned
 					query = "UPDATE 'kr_masterlist' SET status='BANNED' WHERE playername='"
 							+ event.getPlayer().getName() + "';";
-					kr.getLiteDB().standardQuery(query);
 				}
+				kr.getLiteDB().standardQuery(query);
 			}
 		}
 		catch (SQLException e)
@@ -180,9 +218,17 @@ public class Listener extends PlayerListener {
 
 	@Override
 	public void onPlayerKick(PlayerKickEvent event) {
+		if(config.debug)
+		{
+			kr.getLogger().warning(kr.getPluginPrefix() + " PlayerKick event");
+		}
 		final String date = dateFormat.format(new Date()).toString();
 		if (event.getPlayer().isBanned() && config.ban)
 		{
+			if(config.debug)
+			{
+				kr.getLogger().warning(kr.getPluginPrefix() + " PlayerKick - set banned");
+			}
 			String query = "UPDATE 'kr_masterlist' SET status='BANNED' WHERE playername='"
 					+ event.getPlayer().getName() + "';";
 			kr.getLiteDB().standardQuery(query);
@@ -192,6 +238,10 @@ public class Listener extends PlayerListener {
 		}
 		else if(config.kick)
 		{
+			if(config.debug)
+			{
+				kr.getLogger().warning(kr.getPluginPrefix() + " PlayerKick - set kicked");
+			}
 			String query = "UPDATE 'kr_masterlist' SET status='KICKED' WHERE playername='"
 					+ event.getPlayer().getName() + "';";
 			kr.getLiteDB().standardQuery(query);

@@ -21,11 +21,14 @@ permissions:
         description: Gives access to all KarmicShare commands
         children:
             KarmicReport.view: true
-            KarmicShare.edit: true
+            KarmicReport.edit: true
         default: op
     KarmicReport.view:
         description: Allows user view another user's report
         default: op
-    KarmicShare.edit:
+    KarmicReport.edit:
         description: Allows user edit a report
+        default: op
+    KarmicReport.admin:
+        description: Allows administration of plugin
         default: op

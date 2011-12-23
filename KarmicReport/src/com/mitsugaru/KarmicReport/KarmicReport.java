@@ -23,6 +23,7 @@ public class KarmicReport extends JavaPlugin {
 	private final static String prefix = "[KarmicReport]";
 	private Commander commander;
 	private Config config;
+	private PermCheck perm;
 
 	@Override
 	public void onDisable() {
@@ -53,6 +54,9 @@ public class KarmicReport extends JavaPlugin {
 
 		// Config
 		config = new Config(this);
+
+		//Grab permission handler
+		perm = new PermCheck();
 
 		// Grab Commander to handle commands
 		commander = new Commander(this);
@@ -108,5 +112,10 @@ public class KarmicReport extends JavaPlugin {
 
 	public Config getPluginConfig() {
 		return config;
+	}
+
+	public PermCheck getPermissionHandler()
+	{
+		return perm;
 	}
 }

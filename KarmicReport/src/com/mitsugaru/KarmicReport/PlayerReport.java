@@ -139,7 +139,7 @@ public class PlayerReport {
 		}
 	}
 
-	private void displayReports() {
+	public void displayReports() {
 		//Update reports
 		this.updateReports();
 		//Header
@@ -170,7 +170,7 @@ public class PlayerReport {
 		// Create SQL query to see if item is already in
 		// database
 		String query = "SELECT * FROM kr_reports WHERE playername='"
-				+ name + "';";
+				+ name + "' ORDER BY id DESC;";
 		ResultSet rs = kr.getLiteDB().select(query);
 
 		//Parse query
@@ -180,26 +180,22 @@ public class PlayerReport {
 			{
 				do
 				{
-					//Check if HashMap already contains report
 					final int id = rs.getInt("id");
-					if(!rep.containsKey(id))
+					Report r;
+					final int x = rs.getInt("x");
+					//Determine if report has a location or not
+					if(rs.wasNull())
 					{
-						Report r;
-						final int x = rs.getInt("x");
-						//Determine if report has a location or not
-						if(rs.wasNull())
-						{
-							r = new Report(rs.getString("author"), rs.getString("comment"), rs.getString("date"));
-						}
-						else
-						{
-							r = new Report(rs.getString("author"), rs.getString("comment"), rs.getString("date"), x, rs.getInt("y"), rs.getInt("z"));
-						}
-						//Add generated report to list
-						rep.put(id, r);
-						//Add id to report as well
-						r.setID(id);
+						r = new Report(rs.getString("author"), rs.getString("comment"), rs.getString("date"));
 					}
+					else
+					{
+						r = new Report(rs.getString("author"), rs.getString("comment"), rs.getString("date"), x, rs.getInt("y"), rs.getInt("z"));
+					}
+					//Add generated report to list
+					rep.put(id, r);
+					//Add id to report as well
+					r.setID(id);
 				}
 				while (rs.next());
 				rs.close();
@@ -246,6 +242,48 @@ public class PlayerReport {
 					+ " SQL Exception");
 			e.printStackTrace();
 		}
+	}
+
+	public void amendReport(int id, String comment)
+	{
+		//Grab specific report
+		Report[] array = rep.values().toArray(new Report[0]);
+		Report r = array[id-1];
+		//Grab its unique id
+		int rowid = r.getID();
+		//Update report
+		if(sender.getName().equals(r.author))
+		{
+			//Comment being appended by original author
+			r.comment += ChatColor.BLUE + " EDIT:" + ChatColor.GRAY + comment;
+		}
+		else
+		{
+			//Being appended by different author
+			r.comment += ChatColor.BLUE + " EDIT-" + ChatColor.RED + sender.getName() + ChatColor.BLUE + ":" + ChatColor.GRAY + comment;
+		}
+		//Update database
+		String query = "UPDATE kr_reports SET comment='"
+				+ r.comment + "' WHERE id='"
+				+ rowid + "' AND playername='"
+				+ name + "';";
+		kr.getLiteDB().standardQuery(query);
+
+		//TODO this does not seem to update reports viewed by other players
+	}
+
+	public void removeReport(int id)
+	{
+		//Grab specific report
+		Report[] array = rep.values().toArray(new Report[0]);
+		Report r = array[id-1];
+		//Grab its unique id
+		int rowid = r.getID();
+		//Remove from hashmap
+		rep.remove(rowid);
+		//Remove from database
+		String query = "DELETE FROM kr_reports WHERE playername='" + name + "' AND id='" + rowid + "';";
+		kr.getLiteDB().standardQuery(query);
 	}
 
 	public void addReport(String name, String comment)

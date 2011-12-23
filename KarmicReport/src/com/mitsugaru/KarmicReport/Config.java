@@ -9,7 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 public class Config {
 	//Class variables
 	private KarmicReport kr;
-	public boolean ipchange, kick, ban, debugTime;
+	public boolean ipchange, kick, ban, debugTime, debug;
 	public int limit;
 
 	public Config(KarmicReport plugin)
@@ -40,6 +40,7 @@ public class Config {
 		ipchange = config.getBoolean("report.IPchange", true);
 		kick = config.getBoolean("report.kick", true);
 		ban = config.getBoolean("report.ban", true);
+		debug = config.getBoolean("debug", false);
 		limit = config.getInt("limit", 10);
 		if(limit < 1)
 		{
