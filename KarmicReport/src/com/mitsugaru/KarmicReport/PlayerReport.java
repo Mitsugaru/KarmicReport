@@ -120,7 +120,6 @@ public class PlayerReport {
 				//Second line with total number of infractions and page number
 				sb = new StringBuilder();
 				sb.append(ChatColor.GRAY + ""+ rep.size() +" Reports" + ChatColor.LIGHT_PURPLE + "===");
-				//TODO calculate page numbers
 				sb.append(ChatColor.WHITE + "Page " + ChatColor.AQUA+ (page+1) + ChatColor.WHITE +" of " + ChatColor.AQUA + num + ChatColor.LIGHT_PURPLE + "===");
 				sender.sendMessage(sb.toString());
 			}
@@ -146,8 +145,6 @@ public class PlayerReport {
 		this.displayHeader();
 
 		//Generate array
-		//TODO keep this so that I can reference exactly which one they chose to edit
-		//may also have to keep the id back with the report
 		Report[] array = rep.values().toArray(new Report[0]);
 		//Display report summary
 		int limit = kr.getPluginConfig().limit;
@@ -268,8 +265,6 @@ public class PlayerReport {
 				+ rowid + "' AND playername='"
 				+ name + "';";
 		kr.getLiteDB().standardQuery(query);
-
-		//TODO this does not seem to update reports viewed by other players
 	}
 
 	public void removeReport(int id)
@@ -300,6 +295,7 @@ public class PlayerReport {
 	public void getEntry(int num) {
 		//Grab specific report
 		Report[] array = rep.values().toArray(new Report[0]);
+		//TODO bounds check
 		final Report r = array[num-1];
 		StringBuilder sb = new StringBuilder();
 		//Initial header

@@ -120,6 +120,14 @@ public class Listener extends PlayerListener {
 						+ "';";
 				kr.getLiteDB().standardQuery(query);
 			}
+			//Update status to online
+			if(config.debug)
+			{
+				kr.getLogger().warning(kr.getPluginPrefix() + " PlayerJoin - update state");
+			}
+			query = "UPDATE 'kr_masterlist' SET status='ONLINE' WHERE playername='"
+					+ event.getPlayer().getName() + "';";
+			kr.getLiteDB().standardQuery(query);
 			//Grab last ip
 			if(config.ipchange)
 			{
@@ -180,32 +188,22 @@ public class Listener extends PlayerListener {
 			boolean has = false;
 			if (rs.next())
 			{
-				if (rs.getInt(1) >= 1)
+				if (rs.getInt(1) != 0)
 				{
 					// They're already in the database
 					has = true;
 				}
 			}
 			rs.close();
-			if (has)
+			if (has && event.getResult() == PlayerLoginEvent.Result.KICK_BANNED)
 			{
 				if(config.debug)
 				{
 					kr.getLogger().warning(kr.getPluginPrefix() + " PlayerLogin - update state");
 				}
-				if (event.getResult() == PlayerLoginEvent.Result.ALLOWED)
-				{
-					// Update their status to online
-					// Update date
-					query = "UPDATE 'kr_masterlist' SET status='ONLINE' WHERE playername='"
-							+ event.getPlayer().getName() + "';";
-				}
-				else if (event.getResult() == PlayerLoginEvent.Result.KICK_BANNED)
-				{
-					// Update their status to banned
-					query = "UPDATE 'kr_masterlist' SET status='BANNED' WHERE playername='"
-							+ event.getPlayer().getName() + "';";
-				}
+				// Update their status to banned
+				query = "UPDATE 'kr_masterlist' SET status='BANNED' WHERE playername='"
+						+ event.getPlayer().getName() + "';";
 				kr.getLiteDB().standardQuery(query);
 			}
 		}
