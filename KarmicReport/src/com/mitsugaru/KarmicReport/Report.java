@@ -6,12 +6,14 @@
 package com.mitsugaru.KarmicReport;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 
 public class Report {
 	//Class variables
 	public String author, comment, date;
-	public double x, y, z;
-	public boolean location;
+	public Location location;
+	public boolean hasLocation;
 	public int id;
 
 	public Report(String a, String c, String d)
@@ -19,18 +21,16 @@ public class Report {
 		author = a;
 		comment = c;
 		date = d;
-		location = false;
+		hasLocation = false;
 	}
 
-	public Report(String a, String c, String d, double locx, double locy, double locz)
+	public Report(String a, String c, String d, World world, double locx, double locy, double locz)
 	{
 		author = a;
 		comment = c;
 		date = d;
-		x = locx;
-		y = locy;
-		z = locz;
-		location = true;
+		location = new Location(world, locx, locy, locz);
+		hasLocation = true;
 	}
 
 	public int getID()
@@ -41,6 +41,12 @@ public class Report {
 	public void setID(int i)
 	{
 		id = i;
+	}
+
+	public void setLocation(Location l)
+	{
+		location = l;
+		hasLocation = true;
 	}
 
 	/**

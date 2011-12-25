@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class Commander implements CommandExecutor {
 	// Class variables
@@ -55,8 +57,8 @@ public class Commander implements CommandExecutor {
 			}
 			else
 			{
-				sender.sendMessage(ChatColor.RED
-						+ " Lack permission: KarmicRport.view");
+				sender.sendMessage(ChatColor.RED + prefix
+						+ " Lack permission: KarmicReport.view");
 			}
 		}
 		else
@@ -122,10 +124,8 @@ public class Commander implements CommandExecutor {
 				}
 				else
 				{
-					sender.sendMessage(ChatColor.RED
-							+ "You do not have permission for that command.");
-					sender.sendMessage(ChatColor.RED
-							+ "Ask for: KarmicReport.admin");
+					sender.sendMessage(ChatColor.RED + prefix
+							+ " Lack permission: KarmicReport.admin");
 				}
 			}
 			//Previous page command
@@ -193,7 +193,7 @@ public class Commander implements CommandExecutor {
 				}
 			}
 			//Add command
-			else if (com.equals("add"))
+			else if (com.equals("new") || com.equals("add"))
 			{
 				this.addComment(sender, args);
 			}
@@ -202,12 +202,22 @@ public class Commander implements CommandExecutor {
 			{
 				this.removeComment(sender, args);
 			}
-			else if(com.equals("cat") || com.equals("append") || com.equals("amend") || com.equals("edit"))
+			//Edit command
+			else if(com.equals("append") || com.equals("amend") || com.equals("edit"))
 			{
 				this.amendComment(sender, args);
 			}
+			//Warp command
+			else if(com.equals("tp") || com.equals("warp"))
+			{
+				this.warpToCommentLocation(sender, args);
+			}
+			else if(com.equals("gps") || com.equals("pos"))
+			{
+				this.addWarp(sender, args);
+			}
 			//View command
-			else if (com.equals("view"))
+			else if (com.equals("view") || com.equals("check"))
 			{
 				this.viewComment(sender, args);
 			}
@@ -222,6 +232,125 @@ public class Commander implements CommandExecutor {
 			debugTime(sender, time);
 		}
 		return true;
+	}
+
+	private void addWarp(CommandSender sender, String[] args) {
+		if(perm.checkPermission(sender, "KarmicReport.edit"))
+		{
+			//Check if comment id is given
+			if(args.length > 1)
+			{
+				try
+				{
+					int id = Integer.parseInt(args[1]);
+					final String name = sender.getName();
+					if (lookup.containsKey(name))
+					{
+
+						lookup.get(name).addLocation(id);
+						sender.sendMessage(ChatColor.GREEN + prefix
+								+ " Added current location to comment " + id +".");
+					}
+					else
+					{
+						sender.sendMessage(ChatColor.RED
+								+ prefix
+								+ " No report to attach to. Look up a player's report first.");
+					}
+				}
+				catch(NumberFormatException e)
+				{
+					sender.sendMessage(ChatColor.RED + prefix
+							+ " Given comment id is not an integer");
+				}
+			}
+			else
+			{
+				sender.sendMessage(ChatColor.RED + prefix
+						+ " No comment number given");
+			}
+		}
+		else
+		{
+			sender.sendMessage(ChatColor.RED + prefix
+					+ " Lack permission: KarmicReport.edit");
+		}
+	}
+
+	private void warpToCommentLocation(CommandSender sender, String[] args) {
+		if(perm.checkPermission(sender, "KarmicReport.warp"))
+		{
+			//Check if player
+			if(sender instanceof Player)
+			{
+				Player p = (Player) sender;
+				//Check if comment id is given
+				if(args.length > 1)
+				{
+					try
+					{
+						int id = Integer.parseInt(args[1]);
+						final String name = sender.getName();
+						if (lookup.containsKey(name))
+						{
+							//Check if report exists
+							final Report r = lookup.get(name).getReport(id);
+							if(r != null)
+							{
+								//Check if report has a location
+								if(r.hasLocation)
+									{
+									//Check if world exists
+									World w = kr.getServer().getWorld(r.location.getWorld().getName().toString());
+									if(w != null)
+									{
+										p.teleport(r.location);
+										sender.sendMessage(ChatColor.GREEN +  prefix
+												+ " Warped to location");
+									}
+									else
+									{
+										sender.sendMessage(ChatColor.RED + prefix
+												+ " World '" + r.location.getWorld().toString() + "' is not available");
+									}
+								}
+								else
+								{
+									sender.sendMessage(ChatColor.RED + prefix
+											+ " Report does not have a location attached");
+								}
+							}
+						}
+						else
+						{
+							sender.sendMessage(ChatColor.RED
+									+ prefix
+									+ " No report to attach to. Look up a player's report first.");
+						}
+					}
+					catch(NumberFormatException e)
+					{
+						sender.sendMessage(ChatColor.RED +  prefix
+								+ " Given comment id is not an integer");
+					}
+				}
+				else
+				{
+					sender.sendMessage(ChatColor.RED + prefix
+							+ " No comment number given");
+				}
+			}
+			else
+			{
+				sender.sendMessage(ChatColor.RED + prefix
+						+ " Cannot warp as console");
+			}
+		}
+		else
+		{
+			sender.sendMessage(ChatColor.RED + prefix
+					+ " Lack permission: KarmicReport.warp");
+		}
 	}
 
 	private void amendComment(CommandSender sender, String[] args)
@@ -242,12 +371,20 @@ public class Commander implements CommandExecutor {
 						{
 							sb.append(args[i] + " ");
 						}
+						String comment = sb.toString();
 						final String name = sender.getName();
 						if (lookup.containsKey(name))
 						{
-							lookup.get(name).amendReport(id, sb.toString());
-							sender.sendMessage(ChatColor.GREEN + prefix
-									+ " Added to comment in report.");
+							if(comment.contains("\"") || comment.contains("'"))
+							{
+								sender.sendMessage(ChatColor.RED
+										+ prefix
+										+ " Illegal characters: \" or '");
+							}
+							else
+							{
+								lookup.get(name).amendReport(id, comment);
+							}
 						}
 						else
 						{
@@ -258,27 +395,27 @@ public class Commander implements CommandExecutor {
 					}
 					else
 					{
-						sender.sendMessage(ChatColor.RED
+						sender.sendMessage(ChatColor.RED + prefix
 								+ " Nothing to append");
 					}
 
 				}
 				catch(NumberFormatException e)
 				{
-					sender.sendMessage(ChatColor.RED
+					sender.sendMessage(ChatColor.RED + prefix
 							+ " Given comment id is not an integer");
 				}
 			}
 			else
 			{
-				sender.sendMessage(ChatColor.RED
+				sender.sendMessage(ChatColor.RED + prefix
 						+ " No comment number given");
 			}
 		}
 		else
 		{
-			sender.sendMessage(ChatColor.RED
-					+ " Lack permission: KarmicRport.edit");
+			sender.sendMessage(ChatColor.RED + prefix
+					+ " Lack permission: KarmicReport.edit");
 		}
 	}
 
@@ -296,8 +433,6 @@ public class Commander implements CommandExecutor {
 					{
 
 						lookup.get(name).removeReport(id);
-						sender.sendMessage(ChatColor.GREEN + prefix
-								+ " Removed comment from report.");
 					}
 					else
 					{
@@ -308,20 +443,20 @@ public class Commander implements CommandExecutor {
 				}
 				catch(NumberFormatException e)
 				{
-					sender.sendMessage(ChatColor.RED
+					sender.sendMessage(ChatColor.RED + prefix
 							+ " Given comment id is not an integer");
 				}
 			}
 			else
 			{
-				sender.sendMessage(ChatColor.RED
+				sender.sendMessage(ChatColor.RED + prefix
 						+ " No comment number given");
 			}
 		}
 		else
 		{
-			sender.sendMessage(ChatColor.RED
-					+ " Lack permission: KarmicRport.edit");
+			sender.sendMessage(ChatColor.RED + prefix
+					+ " Lack permission: KarmicReport.edit");
 		}
 	}
 
@@ -341,9 +476,16 @@ public class Commander implements CommandExecutor {
 				}
 				String comment = sb.toString();
 				comment = comment.replaceAll("\\s+$", "");
-				lookup.get(name).addReport(name, comment);
-				sender.sendMessage(ChatColor.GREEN + prefix
-						+ " Added comment to report.");
+				if(comment.contains("\"") || comment.contains("'"))
+				{
+					sender.sendMessage(ChatColor.RED
+							+ prefix
+							+ " Illegal characters: \" or '");
+				}
+				else
+				{
+					lookup.get(name).addReport(name, comment);
+				}
 			}
 			else
 			{
@@ -354,8 +496,8 @@ public class Commander implements CommandExecutor {
 		}
 		else
 		{
-			sender.sendMessage(ChatColor.RED
-					+ " Lack permission: KarmicRport.edit");
+			sender.sendMessage(ChatColor.RED + prefix
+					+ " Lack permission: KarmicReport.edit");
 		}
 	}
 
@@ -409,7 +551,7 @@ public class Commander implements CommandExecutor {
 		}
 		catch (SQLException e)
 		{
-			kr.getLogger().warning(kr.getPluginPrefix() + " SQL Exception");
+			kr.getLogger().warning(ChatColor.RED + prefix + " SQL Exception");
 			e.printStackTrace();
 		}
 	}
@@ -451,8 +593,8 @@ public class Commander implements CommandExecutor {
 		}
 		else
 		{
-			sender.sendMessage(ChatColor.RED
-					+ " Lack permission: KarmicRport.view");
+			sender.sendMessage(ChatColor.RED + prefix
+					+ " Lack permission: KarmicReport.view");
 		}
 	}
 

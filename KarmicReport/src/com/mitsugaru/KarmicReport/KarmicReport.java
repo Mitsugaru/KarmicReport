@@ -42,25 +42,13 @@ public class KarmicReport extends JavaPlugin {
 
 	}
 
-	// TODO implement onLoad() ?
-	// Gets called before enable
-	// DiddiZ has it so that it does SQL and config
-	// As well as self-updater
-
 	@Override
-	public void onEnable() {
+	public void onLoad()
+	{
 		// Logger
 		syslog = this.getServer().getLogger();
-
 		// Config
 		config = new Config(this);
-
-		//Grab permission handler
-		perm = new PermCheck();
-
-		// Grab Commander to handle commands
-		commander = new Commander(this);
-		getCommand("report").setExecutor(commander);
 		// TODO MySQL support
 		// Connect to sql database
 		database = new SQLite(syslog, prefix, "report", this.getDataFolder()
@@ -78,8 +66,22 @@ public class KarmicReport extends JavaPlugin {
 			//Reports table
 			syslog.info(prefix + " Created reports table");
 			//TODO reports need an id
-			database.createTable("CREATE TABLE `kr_reports` (`id` INTEGER PRIMARY KEY,`playername` TEXT NOT NULL, `author` TEXT NOT NULL, 'date' TEXT NOT NULL, 'comment' TEXT NOT NULL, 'x' INTEGER, 'y' INTEGER, 'z' INTEGER);");
+			database.createTable("CREATE TABLE `kr_reports` (`id` INTEGER PRIMARY KEY,`playername` TEXT NOT NULL, `author` TEXT NOT NULL, 'date' TEXT NOT NULL, 'comment' TEXT NOT NULL, 'world' TEXT, 'x' INTEGER, 'y' INTEGER, 'z' INTEGER);");
 		}
+	}
+
+	@Override
+	public void onEnable() {
+		//Check if need to update
+		config.checkUpdate();
+
+		//Grab permission handler
+		perm = new PermCheck();
+
+		// Grab Commander to handle commands
+		commander = new Commander(this);
+		getCommand("report").setExecutor(commander);
+
 		//Register Listener
 		Listener listener = new Listener(this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, listener, Event.Priority.Monitor, this);

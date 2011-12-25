@@ -22,12 +22,17 @@ permissions:
         children:
             KarmicReport.view: true
             KarmicReport.edit: true
+            KarmicReport.warp: true
+            KarmicReport.admin: true
         default: op
     KarmicReport.view:
         description: Allows user view another user's report
         default: op
     KarmicReport.edit:
         description: Allows user edit a report
+        default: op
+    KarmicReport.warp:
+        description: Allows user to warp to location attached to report
         default: op
     KarmicReport.admin:
         description: Allows administration of plugin
