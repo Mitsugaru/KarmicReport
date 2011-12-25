@@ -535,18 +535,16 @@ public class Commander implements CommandExecutor {
 							+ " TODO: more than one match in database");
 				}
 			}
-			else
-			{
-				// Player not in database
-				sender.sendMessage(ChatColor.RED + prefix + " " + name
-						+ " is not in database");
-				sender.sendMessage(ChatColor.RED + prefix
-						+ " Names are case-sensitive");
-			}
 			rs.close();
 			if (has)
 			{
 				lookup.put(sender.getName(), new PlayerReport(kr, sender, name));
+			}
+			else
+			{
+				// Player not in database
+				sender.sendMessage(ChatColor.RED + prefix + " Player '" +ChatColor.GOLD + name
+						+ ChatColor.RED + "' is not in database. Note: Names are case-sensitive");
 			}
 		}
 		catch (SQLException e)

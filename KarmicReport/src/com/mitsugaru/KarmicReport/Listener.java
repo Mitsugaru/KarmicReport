@@ -161,7 +161,7 @@ public class Listener extends PlayerListener {
 					kr.getLiteDB().standardQuery(query);
 					//Update ip in masterlist
 					query = "UPDATE 'kr_masterlist' SET ip='"
-							+ ip + "' WHERE playername='" + event.getPlayer().getName() + "';";
+							+ newip + "' WHERE playername='" + event.getPlayer().getName() + "';";
 					kr.getLiteDB().standardQuery(query);
 				}
 			}

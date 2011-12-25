@@ -115,6 +115,7 @@ public class PlayerReport {
 					// Some other custom status is used...
 					sb.append(ChatColor.AQUA + status);
 				}
+				sb.append(ChatColor.BLUE + ":" + ChatColor.RED + rs.getString("ip"));
 				sb.append(ChatColor.LIGHT_PURPLE + "===");
 				sender.sendMessage(sb.toString());
 				// Second line with total number of infractions and page number
@@ -427,10 +428,10 @@ public class PlayerReport {
 		// Split lines if necessary
 		if (r.comment.length() > 65)
 		{
-			String[] lines = r.getComment().split("", 65);
+			String[] lines = this.splitByLength(r.comment, 65);
 			for (int i = 0; i < lines.length; i++)
 			{
-				sender.sendMessage(ChatColor.GRAY + lines[i]);
+				sender.sendMessage(ChatColor.GRAY + colorizeText(lines[i]));
 			}
 		}
 		else
@@ -438,4 +439,35 @@ public class PlayerReport {
 			sender.sendMessage(ChatColor.GRAY + r.getComment());
 		}
 	}
+
+	private String[] splitByLength(String s, int chunk) {
+		int arraySize = (int) Math.ceil((double) s.length() / chunk);
+		String[] array = new String[arraySize];
+		int index = 0;
+		for(int i = 0; i < s.length(); i = i+ chunk)
+		{
+			if(s.length() - i < chunk)
+			{
+				array[index++] = s.substring(i);
+			}
+			else
+			{
+				array[index++] = s.substring(i, i+chunk);
+			}
+		}
+		return array;
+	}
+
+	/**
+     * Colorizes a given string to Bukkit standards
+     * @param string
+     * @return String with appropriate Bukkit ChatColor in them
+     * @author Coryf88
+     */
+    public String colorizeText(String string) {
+        for (ChatColor color : ChatColor.values()) {
+            string = string.replace(String.format("&%x", color.getCode()), color.toString());
+        }
+        return string;
+    }
 }
