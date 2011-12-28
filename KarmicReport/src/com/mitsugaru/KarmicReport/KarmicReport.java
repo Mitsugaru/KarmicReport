@@ -53,7 +53,7 @@ public class KarmicReport extends JavaPlugin {
 		// Connect to sql database
 		database = new SQLite(syslog, prefix, "report", this.getDataFolder()
 				.getAbsolutePath());
-		// Check if item table exists
+		// Check if master player table exists
 		if (!database.checkTable("kr_masterlist"))
 		{
 			syslog.info(prefix + " Created master list table");
