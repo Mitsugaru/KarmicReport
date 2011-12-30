@@ -613,7 +613,7 @@ public class Commander implements CommandExecutor {
 	}
 
 	/**
-	 * Attemps to look up full name based on who's on the server Given a partial
+	 * Attempts to look up full name based on who's on the server Given a partial
 	 * name
 	 *
 	 * @author Frigid, edited by Raphfrk and petteyg359
