@@ -72,7 +72,7 @@ public class KarmicReport extends JavaPlugin {
 		config.checkUpdate();
 
 		//Grab permission handler
-		perm = new PermCheck();
+		perm = new PermCheck(this);
 
 		// Grab Commander to handle commands
 		commander = new Commander(this);
@@ -86,7 +86,7 @@ public class KarmicReport extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, listener, Event.Priority.Monitor, this);
 
 		//Register KarmicJail listener if plugin exists
-		if(this.getServer().getPluginManager().isPluginEnabled("KarmicJail"))
+		if(this.getServer().getPluginManager().getPlugin("KarmicJail") != null)
 		{
 			KarmicJailListener jailListener = new KarmicJailListener(this);
 			this.getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, jailListener, Event.Priority.Monitor, this);

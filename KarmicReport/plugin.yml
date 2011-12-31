@@ -11,6 +11,8 @@ description: User report and comment system, to keep a history of infractions
 authors:
   - Mitsugaru
 
+softdepend: [Vault, KarmicJail]
+
 commands:
   report:
     description: Root command for KarmicShare
