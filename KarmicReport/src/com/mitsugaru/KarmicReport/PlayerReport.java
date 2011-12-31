@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
@@ -17,7 +17,7 @@ public class PlayerReport {
 	// Class variables
 	private final KarmicReport kr;
 	private final CommandSender sender;
-	private final Map<Integer, Report> rep = new HashMap<Integer, Report>();
+	private final Map<Integer, Report> rep = new LinkedHashMap<Integer, Report>();
 	private int page;
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
@@ -32,6 +32,7 @@ public class PlayerReport {
 		this.displayReports();
 	}
 
+	//TODO page method
 	public void changePage(int adjust) {
 		// Grab number of pages
 		int num = rep.size() / kr.getPluginConfig().limit;
