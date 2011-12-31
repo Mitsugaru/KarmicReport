@@ -27,9 +27,6 @@ public class KarmicReport extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		// TODO IDK of anything else to do :\
-		// maybe clear out memory by setting stuff to null?
-		// dunno how safe that is
 		//Save config
 		this.saveConfig();
 		// Disconnect from sql database? Dunno if necessary
@@ -65,7 +62,6 @@ public class KarmicReport extends JavaPlugin {
 		{
 			//Reports table
 			syslog.info(prefix + " Created reports table");
-			//TODO reports need an id
 			database.createTable("CREATE TABLE `kr_reports` (`id` INTEGER PRIMARY KEY,`playername` TEXT NOT NULL, `author` TEXT NOT NULL, 'date' TEXT NOT NULL, 'comment' TEXT NOT NULL, 'world' TEXT, 'x' INTEGER, 'y' INTEGER, 'z' INTEGER);");
 		}
 	}
@@ -84,10 +80,18 @@ public class KarmicReport extends JavaPlugin {
 
 		//Register Listener
 		Listener listener = new Listener(this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, listener, Event.Priority.Monitor, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, listener, Event.Priority.Monitor, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, listener, Event.Priority.Monitor, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, listener, Event.Priority.Monitor, this);
+		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, listener, Event.Priority.Monitor, this);
+		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, listener, Event.Priority.Monitor, this);
+		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, listener, Event.Priority.Monitor, this);
+		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, listener, Event.Priority.Monitor, this);
+
+		//Register KarmicJail listener if plugin exists
+		if(this.getServer().getPluginManager().isPluginEnabled("KarmicJail"))
+		{
+			KarmicJailListener jailListener = new KarmicJailListener(this);
+			this.getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, jailListener, Event.Priority.Monitor, this);
+		}
+		//Notify that its enabled
 		syslog.info(prefix + " KarmicReport v" + this.getDescription().getVersion() + " enabled");
 	}
 

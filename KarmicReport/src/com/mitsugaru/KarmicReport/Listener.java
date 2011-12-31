@@ -15,7 +15,7 @@ public class Listener extends PlayerListener {
 	// Class variables
 	private final KarmicReport kr;
 	private final Config config;
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat(
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
 
 	public Listener(KarmicReport plugin) {
