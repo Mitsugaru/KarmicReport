@@ -33,15 +33,16 @@ public class KarmicJailListener extends CustomEventListener {
 		StringBuilder sb = new StringBuilder();
 		sb.append("INSERT INTO 'kr_reports' (playername,author,date,comment) VALUES('");
 		sb.append(event.name + "','" + event.jailer + "','" + date + "'");
-		if (event.reason.isEmpty())
+
+		if (event.reason.equals(""))
 		{
 			// Default reason
 			sb.append(",'Jailed');");
 		}
 		else
 		{
-			// Add reasons
-			sb.append(",'" + event.reason + "');");
+			// Add reason
+			sb.append(",'&4Jailed &7for: " + event.reason + "');");
 		}
 		// Send query
 		plugin.getLiteDB().standardQuery(sb.toString());
