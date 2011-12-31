@@ -88,6 +88,7 @@ public class KarmicReport extends JavaPlugin {
 		//Register KarmicJail listener if plugin exists
 		if(this.getServer().getPluginManager().getPlugin("KarmicJail") != null)
 		{
+			syslog.info(prefix + " Hooked into KarmicJail");
 			KarmicJailListener jailListener = new KarmicJailListener(this);
 			this.getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, jailListener, Event.Priority.Monitor, this);
 		}
