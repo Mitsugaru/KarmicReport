@@ -37,7 +37,7 @@ public class KarmicJailListener extends CustomEventListener {
 		if (event.reason.equals(""))
 		{
 			// Default reason
-			sb.append(",'Jailed');");
+			sb.append(",'&4Jailed');");
 		}
 		else
 		{
