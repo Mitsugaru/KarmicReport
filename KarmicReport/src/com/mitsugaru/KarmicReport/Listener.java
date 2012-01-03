@@ -25,7 +25,7 @@ public class Listener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerQuit(PlayerQuitEvent event) {
+	public void onPlayerQuit(final PlayerQuitEvent event) {
 		if(config.debug)
 		{
 			kr.getLogger().warning(kr.getPluginPrefix() + " PlayerQuit event");
@@ -68,7 +68,7 @@ public class Listener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerJoin(PlayerJoinEvent event) {
+	public void onPlayerJoin(final PlayerJoinEvent event) {
 		if(config.debug)
 		{
 			kr.getLogger().warning(kr.getPluginPrefix() + " PlayerJoin event");
@@ -175,7 +175,7 @@ public class Listener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerLogin(PlayerLoginEvent event) {
+	public void onPlayerLogin(final PlayerLoginEvent event) {
 		if(config.debug)
 		{
 			kr.getLogger().warning(kr.getPluginPrefix() + " PlayerLogin event");
@@ -215,7 +215,7 @@ public class Listener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerKick(PlayerKickEvent event) {
+	public void onPlayerKick(final PlayerKickEvent event) {
 		if(config.debug)
 		{
 			kr.getLogger().warning(kr.getPluginPrefix() + " PlayerKick event");

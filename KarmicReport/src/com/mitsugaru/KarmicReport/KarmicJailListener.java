@@ -25,7 +25,7 @@ public class KarmicJailListener extends CustomEventListener {
 		}
 	}
 
-	public void onJailEvent(JailEvent event)
+	public void onJailEvent(final JailEvent event)
 	{
 		// Grab dates
 		final String date = dateFormat.format(new Date()).toString();
