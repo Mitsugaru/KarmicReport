@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 import lib.PatPeter.SQLibrary.SQLite;
 
-import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class KarmicReport extends JavaPlugin {
@@ -79,18 +78,15 @@ public class KarmicReport extends JavaPlugin {
 		getCommand("report").setExecutor(commander);
 
 		//Register Listener
-		Listener listener = new Listener(this);
-		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, listener, Event.Priority.Monitor, this);
-		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, listener, Event.Priority.Monitor, this);
-		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, listener, Event.Priority.Monitor, this);
-		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, listener, Event.Priority.Monitor, this);
+		KarmicReportListener listener = new KarmicReportListener(this);
+		this.getServer().getPluginManager().registerEvents(listener, this);
 
 		//Register KarmicJail listener if plugin exists
 		if(this.getServer().getPluginManager().getPlugin("KarmicJail") != null)
 		{
 			syslog.info(prefix + " Hooked into KarmicJail");
 			KarmicJailListener jailListener = new KarmicJailListener(this);
-			this.getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, jailListener, Event.Priority.Monitor, this);
+			this.getServer().getPluginManager().registerEvents(jailListener, this);
 		}
 		//Notify that its enabled
 		syslog.info(prefix + " KarmicReport v" + this.getDescription().getVersion() + " enabled");

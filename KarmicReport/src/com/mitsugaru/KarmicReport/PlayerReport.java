@@ -467,7 +467,7 @@ public class PlayerReport {
      */
     public String colorizeText(String string) {
         for (ChatColor color : ChatColor.values()) {
-            string = string.replace(String.format("&%x", color.getCode()), color.toString());
+            string = string.replace(String.format("&%x", color.getChar()), color.toString());
         }
         return string;
     }

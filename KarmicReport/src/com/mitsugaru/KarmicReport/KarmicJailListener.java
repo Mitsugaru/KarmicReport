@@ -3,12 +3,13 @@ package com.mitsugaru.KarmicReport;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.bukkit.event.CustomEventListener;
-import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 import com.mitsugaru.karmicjail.JailEvent;
 
-public class KarmicJailListener extends CustomEventListener {
+public class KarmicJailListener implements Listener {
 
 	private KarmicReport plugin;
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -18,13 +19,7 @@ public class KarmicJailListener extends CustomEventListener {
 		plugin = kr;
 	}
 
-	public void onCustomEvent(Event event) {
-		if(event instanceof JailEvent)
-		{
-			this.onJailEvent((JailEvent) event);
-		}
-	}
-
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onJailEvent(final JailEvent event)
 	{
 		// Grab dates

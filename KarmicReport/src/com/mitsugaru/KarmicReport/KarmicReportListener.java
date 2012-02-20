@@ -5,26 +5,28 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class Listener extends PlayerListener {
+public class KarmicReportListener implements Listener {
 	// Class variables
 	private final KarmicReport kr;
 	private final Config config;
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
 
-	public Listener(KarmicReport plugin) {
+	public KarmicReportListener(KarmicReport plugin) {
 		// Instantiate variables
 		kr = plugin;
 		config = kr.getPluginConfig();
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(final PlayerQuitEvent event) {
 		if(config.debug)
 		{
@@ -67,7 +69,7 @@ public class Listener extends PlayerListener {
 		}
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(final PlayerJoinEvent event) {
 		if(config.debug)
 		{
@@ -174,7 +176,7 @@ public class Listener extends PlayerListener {
 		}
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerLogin(final PlayerLoginEvent event) {
 		if(config.debug)
 		{
@@ -214,7 +216,7 @@ public class Listener extends PlayerListener {
 		}
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerKick(final PlayerKickEvent event) {
 		if(config.debug)
 		{
