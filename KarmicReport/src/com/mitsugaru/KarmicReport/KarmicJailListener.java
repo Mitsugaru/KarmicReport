@@ -27,9 +27,9 @@ public class KarmicJailListener implements Listener {
 		// Create query
 		StringBuilder sb = new StringBuilder();
 		sb.append("INSERT INTO 'kr_reports' (playername,author,date,comment) VALUES('");
-		sb.append(event.name + "','" + event.jailer + "','" + date + "'");
+		sb.append(event.getName() + "','" + event.getJailer() + "','" + date + "'");
 
-		if (event.reason.equals(""))
+		if (event.getReason().equals(""))
 		{
 			// Default reason
 			sb.append(",'&4Jailed');");
@@ -37,7 +37,7 @@ public class KarmicJailListener implements Listener {
 		else
 		{
 			// Add reason
-			sb.append(",'&4Jailed &7for: " + event.reason + "');");
+			sb.append(",'&4Jailed &7for: " + event.getReason() + "');");
 		}
 		// Send query
 		plugin.getLiteDB().standardQuery(sb.toString());

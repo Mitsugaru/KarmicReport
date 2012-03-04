@@ -9,8 +9,6 @@
  */
 package com.mitsugaru.KarmicReport;
 
-import java.util.logging.Logger;
-
 import lib.PatPeter.SQLibrary.SQLite;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,7 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class KarmicReport extends JavaPlugin {
 	// Class variables
 	private SQLite database;
-	private Logger syslog;
 	private final static String prefix = "[KarmicReport]";
 	private Commander commander;
 	private Config config;
@@ -34,25 +31,23 @@ public class KarmicReport extends JavaPlugin {
 			// Close connection
 			database.close();
 		}
-		syslog.info(prefix + " Plugin disabled");
+		getLogger().info(prefix + " Plugin disabled");
 
 	}
 
 	@Override
 	public void onLoad()
 	{
-		// Logger
-		syslog = this.getServer().getLogger();
 		// Config
 		config = new Config(this);
 		// TODO MySQL support
 		// Connect to sql database
-		database = new SQLite(syslog, prefix, "report", this.getDataFolder()
+		database = new SQLite(getLogger(), prefix, "report", this.getDataFolder()
 				.getAbsolutePath());
 		// Check if master player table exists
 		if (!database.checkTable("kr_masterlist"))
 		{
-			syslog.info(prefix + " Created master list table");
+			getLogger().info(prefix + " Created master list table");
 			//Master table
 			database.createTable("CREATE TABLE `kr_masterlist` (`playername` varchar(32) NOT NULL, 'date' TEXT NOT NULL, 'status' TEXT, 'ip' TEXT NOT NULL);");
 		}
@@ -60,7 +55,7 @@ public class KarmicReport extends JavaPlugin {
 		if (!database.checkTable("kr_reports"))
 		{
 			//Reports table
-			syslog.info(prefix + " Created reports table");
+			getLogger().info(prefix + " Created reports table");
 			database.createTable("CREATE TABLE `kr_reports` (`id` INTEGER PRIMARY KEY,`playername` TEXT NOT NULL, `author` TEXT NOT NULL, 'date' TEXT NOT NULL, 'comment' TEXT NOT NULL, 'world' TEXT, 'x' INTEGER, 'y' INTEGER, 'z' INTEGER);");
 		}
 	}
@@ -84,20 +79,12 @@ public class KarmicReport extends JavaPlugin {
 		//Register KarmicJail listener if plugin exists
 		if(this.getServer().getPluginManager().getPlugin("KarmicJail") != null)
 		{
-			syslog.info(prefix + " Hooked into KarmicJail");
+			getLogger().info(prefix + " Hooked into KarmicJail");
 			KarmicJailListener jailListener = new KarmicJailListener(this);
 			this.getServer().getPluginManager().registerEvents(jailListener, this);
 		}
 		//Notify that its enabled
-		syslog.info(prefix + " KarmicReport v" + this.getDescription().getVersion() + " enabled");
-	}
-
-	/**
-	 *
-	 * @return System logger
-	 */
-	public Logger getLogger() {
-		return syslog;
+		getLogger().info(prefix + " KarmicReport v" + this.getDescription().getVersion() + " enabled");
 	}
 
 	/**
