@@ -1,9 +1,10 @@
 package com.mitsugaru.KarmicReport;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import lib.PatPeter.SQLibrary.Database.Query;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -515,18 +516,18 @@ public class Commander implements CommandExecutor {
 		// See if name matches master list
 		String query = "SELECT COUNT(*) FROM 'kr_masterlist' WHERE playername='"
 				+ name + "';";
-		ResultSet rs = kr.getLiteDB().select(query);
+		Query rs = kr.getLiteDB().select(query);
 		try
 		{
 			boolean has = false;
-			if (rs.next())
+			if (rs.getResult().next())
 			{
-				if (rs.getInt(1) == 1)
+				if (rs.getResult().getInt(1) == 1)
 				{
 					// Found exactly one person
 					has = true;
 				}
-				else if (rs.getInt(1) > 1)
+				else if (rs.getResult().getInt(1) > 1)
 				{
 					// Found one than more match
 					// TODO handle more than one match in database
@@ -535,7 +536,7 @@ public class Commander implements CommandExecutor {
 							+ " TODO: more than one match in database");
 				}
 			}
-			rs.close();
+			rs.closeQuery();
 			if (has)
 			{
 				lookup.put(sender.getName(), new PlayerReport(kr, sender, name));

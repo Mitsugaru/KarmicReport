@@ -1,12 +1,13 @@
 package com.mitsugaru.KarmicReport;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import lib.PatPeter.SQLibrary.Database.Query;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -75,7 +76,7 @@ public class PlayerReport {
 		// Header
 		String query = "SELECT * FROM kr_masterlist WHERE playername='" + name
 				+ "';";
-		ResultSet rs = kr.getLiteDB().select(query);
+		Query rs = kr.getLiteDB().select(query);
 
 		// Caluclate amount of pages
 		int num = rep.size() / kr.getPluginConfig().limit;
@@ -88,13 +89,13 @@ public class PlayerReport {
 		// parse query
 		try
 		{
-			if (rs.next())
+			if (rs.getResult().next())
 			{
 				// Initial header with player name and status
 				StringBuilder sb = new StringBuilder();
 				sb.append(ChatColor.LIGHT_PURPLE + "===" + ChatColor.WHITE
 						+ name + ChatColor.LIGHT_PURPLE + "===");
-				String status = rs.getString("status");
+				String status = rs.getResult().getString("status");
 				if (status.equals("BANNED"))
 				{
 					sb.append(ChatColor.RED + status);
@@ -116,7 +117,7 @@ public class PlayerReport {
 					// Some other custom status is used...
 					sb.append(ChatColor.AQUA + status);
 				}
-				sb.append(ChatColor.BLUE + ":" + ChatColor.RED + rs.getString("ip"));
+				sb.append(ChatColor.BLUE + ":" + ChatColor.RED + rs.getResult().getString("ip"));
 				sb.append(ChatColor.LIGHT_PURPLE + "===");
 				sender.sendMessage(sb.toString());
 				// Second line with total number of infractions and page number
@@ -133,7 +134,7 @@ public class PlayerReport {
 				sender.sendMessage(ChatColor.RED + kr.getPluginPrefix() + " "
 						+ name + "'s record is missing...");
 			}
-			rs.close();
+			rs.closeQuery();
 		}
 		catch (SQLException e)
 		{
@@ -173,42 +174,42 @@ public class PlayerReport {
 		// database
 		String query = "SELECT * FROM kr_reports WHERE playername='" + name
 				+ "' ORDER BY id DESC;";
-		ResultSet rs = kr.getLiteDB().select(query);
+		Query rs = kr.getLiteDB().select(query);
 
 		// Parse query
 		try
 		{
-			if (rs.next())
+			if (rs.getResult().next())
 			{
 				do
 				{
-					final int id = rs.getInt("id");
+					final int id = rs.getResult().getInt("id");
 					Report r;
-					final int x = rs.getInt("x");
+					final int x = rs.getResult().getInt("x");
 					// Determine if report has a location or not
-					if (rs.wasNull())
+					if (rs.getResult().wasNull())
 					{
-						r = new Report(rs.getString("author"),
-								rs.getString("comment"), rs.getString("date"));
+						r = new Report(rs.getResult().getString("author"),
+								rs.getResult().getString("comment"), rs.getResult().getString("date"));
 					}
 					else
 					{
 						World w = kr.getServer()
-								.getWorld(rs.getString("world"));
+								.getWorld(rs.getResult().getString("world"));
 						// Check if world exists
 						if (w != null)
 						{
-							r = new Report(rs.getString("author"),
-									rs.getString("comment"),
-									rs.getString("date"), w, x, rs.getInt("y"),
-									rs.getInt("z"));
+							r = new Report(rs.getResult().getString("author"),
+									rs.getResult().getString("comment"),
+									rs.getResult().getString("date"), w, x, rs.getResult().getInt("y"),
+									rs.getResult().getInt("z"));
 						}
 						else
 						{
 							// world no longer available, so add as regular
-							r = new Report(rs.getString("author"),
-									rs.getString("comment"),
-									rs.getString("date"));
+							r = new Report(rs.getResult().getString("author"),
+									rs.getResult().getString("comment"),
+									rs.getResult().getString("date"));
 						}
 					}
 					// Add generated report to list
@@ -216,8 +217,8 @@ public class PlayerReport {
 					// Add id to report as well
 					r.setID(id);
 				}
-				while (rs.next());
-				rs.close();
+				while (rs.getResult().next());
+				rs.closeQuery();
 			}
 		}
 		catch (SQLException e)
@@ -244,12 +245,12 @@ public class PlayerReport {
 		query = "SELECT * FROM kr_reports WHERE playername='" + name
 				+ "' AND author ='" + in.author + "' AND date='" + in.date
 				+ "';";
-		ResultSet rs = kr.getLiteDB().select(query);
+		Query rs = kr.getLiteDB().select(query);
 		try
 		{
-			if (rs.next())
+			if (rs.getResult().next())
 			{
-				int id = rs.getInt("id");
+				int id = rs.getResult().getInt("id");
 				// Add report to map using the rowid
 				rep.put(id, in);
 				// Add id to report as well
@@ -260,7 +261,7 @@ public class PlayerReport {
 				sender.sendMessage(ChatColor.RED + kr.getPluginPrefix()
 						+ " Could not retrieve report...");
 			}
-			rs.close();
+			rs.closeQuery();
 			sender.sendMessage(ChatColor.GREEN + kr.getPluginPrefix()
 					+ " Added comment to report.");
 		}

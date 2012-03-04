@@ -1,9 +1,10 @@
 package com.mitsugaru.KarmicReport;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import lib.PatPeter.SQLibrary.Database.Query;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,18 +36,18 @@ public class KarmicReportListener implements Listener {
 		final String name = event.getPlayer().getName();
 		String query = "SELECT * FROM 'kr_masterlist' WHERE playername='"
 				+ name + "';";
-		ResultSet rs = kr.getLiteDB().select(query);
+		Query rs = kr.getLiteDB().select(query);
 		try
 		{
 			boolean has = false;
 			String status = "";
-			if (rs.next())
+			if (rs.getResult().next())
 			{
 				// They're already in the database
 				has = true;
-				status = rs.getString("status");
+				status = rs.getResult().getString("status");
 			}
-			rs.close();
+			rs.closeQuery();
 			if(has)
 			{
 				if(config.debug)
@@ -80,19 +81,19 @@ public class KarmicReportListener implements Listener {
 		final String date = dateFormat.format(new Date()).toString();
 		String query = "SELECT COUNT(*) FROM 'kr_masterlist' WHERE playername='"
 				+ event.getPlayer().getName() + "';";
-		ResultSet rs = kr.getLiteDB().select(query);
+		Query rs = kr.getLiteDB().select(query);
 		try
 		{
 			boolean has = false;
-			if (rs.next())
+			if (rs.getResult().next())
 			{
-				if (rs.getInt(1) >= 1)
+				if (rs.getResult().getInt(1) >= 1)
 				{
 					// They're already in the database
 					has = true;
 				}
 			}
-			rs.close();
+			rs.closeQuery();
 			if (!has)
 			{
 				if(config.debug)
@@ -142,16 +143,16 @@ public class KarmicReportListener implements Listener {
 				rs = kr.getLiteDB().select(query);
 				String ip = "";
 				boolean ipChanged = false;
-				if(rs.next())
+				if(rs.getResult().next())
 				{
-					ip = rs.getString("ip");
+					ip = rs.getResult().getString("ip");
 					if(!ip.equals(newip))
 					{
 						//Their current ip is different from the master list
 						ipChanged= true;
 					}
 				}
-				rs.close();
+				rs.closeQuery();
 				if(ipChanged)
 				{
 					if(config.debug)
@@ -186,17 +187,17 @@ public class KarmicReportListener implements Listener {
 		{
 			String query = "SELECT COUNT(*) FROM 'kr_masterlist' WHERE playername='"
 				+ event.getPlayer().getName() + "';";
-			ResultSet rs = kr.getLiteDB().select(query);
+			Query rs = kr.getLiteDB().select(query);
 			boolean has = false;
-			if (rs.next())
+			if (rs.getResult().next())
 			{
-				if (rs.getInt(1) != 0)
+				if (rs.getResult().getInt(1) != 0)
 				{
 					// They're already in the database
 					has = true;
 				}
 			}
-			rs.close();
+			rs.closeQuery();
 			if (has && event.getResult() == PlayerLoginEvent.Result.KICK_BANNED)
 			{
 				if(config.debug)
